@@ -1,126 +1,100 @@
-import React, { useState, useReducer } from "react";
-import "./App.css";
+import React, { useState, useReducer, useRef } from "react";
 import uuid from "react-uuid";
 
-function App() {
-  const [task, setTask] = useState("");
+const todosReducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TODO":
+      return [
+        ...state,
+        { title: action.task, id: action.id, completed: false, isShow: true },
+      ];
+    case "DONE_TODO":
+      return state.map((todo) =>
+        todo.id === action.id ? { ...todo, completed: true } : todo
+      );
+    case "DELETE_TODO":
+      return state.filter((todo) => todo.id !== action.id);
+    case "SHOW_DONE_TODO":
+      return state.map((todo) =>
+        todo.completed ? { ...todo, isShow: true } : { ...todo, isShow: false }
+      );
+    case "SHOW_PENDING_TODO":
+      return state.map((todo) =>
+        todo.completed ? { ...todo, isShow: false } : { ...todo, isShow: true }
+      );
 
-  const initialTodos = [
-    {
-      id: uuid(),
-      task: "Learn React",
-      complete: true,
-    },
-    {
-      id: uuid(),
-      task: "Learn Firebase",
-      complete: true,
-    },
-    {
-      id: uuid(),
-      task: "Learn GraphQL",
-      complete: false,
-    },
-  ];
-  const [todos, setTodos] = useState(initialTodos);
+    default:
+      return state.map((todo) => ({ ...todo, isShow: true }));
+  }
+};
+
+const initialTodos = [];
+export default function App() {
+  const todoInput = useRef();
+  const [todos, dispatch] = useReducer(todosReducer, initialTodos);
+
   const handleSubmit = (e) => {
-    if (task) {
-      setTodos([...todos, { id: uuid(), task, complete: false }]);
-    }
-    setTask("");
     e.preventDefault();
+    dispatch({
+      type: "ADD_TODO",
+      task: todoInput.current.value,
+      id: uuid(),
+    });
+    todoInput.current.value = "";
   };
-
-  const handleChangeInput = (e) => {
-    console.log(e.target.value);
-    setTask(e.target.value);
+  const handleDone = (id) => {
+    dispatch({
+      type: "DONE_TODO",
+      id,
+    });
   };
-  const handleChangeCheckbox = (id) => {
-    setTodos(
-      todos.map((todo) => {
-        return todo.id === id ? { ...todo, complete: !todo.complete } : todo;
-      })
-    );
+  const handleDelete = (id) => {
+    dispatch({
+      type: "DELETE_TODO",
+      id,
+    });
   };
-
-  const filterReducer = (state, action) => {
-    switch (action.type) {
-      case "SHOW_ALL":
-        return "ALL";
-
-      case "SHOW_COMPLETED":
-        return "COMPLETED";
-
-      case "SHOW_INCOMPLETED":
-        return "INCOMPLETED";
-
-      default:
-        throw new Error();
-    }
+  const handleSelectOption = (value) => {
+    dispatch({
+      type: value,
+    });
   };
-  const [filter, dispatchFilter] = useReducer(filterReducer, "ALL");
-  const handleShowAll = () => {
-    dispatchFilter({ type: "SHOW_ALL" });
-  };
-
-  const handleShowCompleted = () => {
-    dispatchFilter({ type: "SHOW_COMPLETED" });
-  };
-
-  const handleShowIncompleted = () => {
-    dispatchFilter({ type: "SHOW_INCOMPLETED" });
-  };
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === "ALL") {
-      return true;
-    }
-
-    if (filter === "COMPLETED" && todo.complete) {
-      return true;
-    }
-
-    if (filter === "INCOMPLETED" && !todo.complete) {
-      return true;
-    }
-
-    return false;
-  });
+  console.log("rerender....");
   return (
-    <div className="App">
+    <div>
       <h1>My Todo App</h1>
       <form action="" onSubmit={handleSubmit}>
-        <input type="text" value={task} onChange={handleChangeInput} />
+        <input type="text" placeholder="e.g reading" ref={todoInput} required />
         <button type="submit">ADD</button>
+        <select
+          onChange={(e) => handleSelectOption(e.target.value)}
+          id="show"
+          name="todo"
+        >
+          <option value="all">All</option>
+          <option value="SHOW_DONE_TODO">Completed</option>
+          <option value="SHOW_PENDING_TODO">Incompleted</option>
+        </select>
       </form>
       <div className="show-todo">
-        <button type="button" onClick={handleShowAll}>
-          All
-        </button>
-        <button type="button" onClick={handleShowCompleted}>
-          Completed
-        </button>
-        <button type="button" onClick={handleShowIncompleted}>
-          Incompleted
-        </button>
-      </div>
-      <div className="todo-list">
-        <ul>
-          {filteredTodos.map((todo) => (
-            <li key={todo.id}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={todo.complete}
-                  onChange={() => handleChangeCheckbox(todo.id)}
-                />
-                {todo.task}
-              </label>
-            </li>
-          ))}
-        </ul>
+        {todos.map((todo) => {
+          if (todo.isShow)
+            return (
+              <div>
+                <p
+                  style={{
+                    textDecoration: todo.completed ? "line-through" : null,
+                  }}
+                >
+                  {todo.title}{" "}
+                </p>
+                <button onClick={() => handleDone(todo.id)}>done</button>
+                <button onClick={() => handleDelete(todo.id)}>delete</button>
+                <hr />
+              </div>
+            );
+        })}
       </div>
     </div>
   );
 }
-
-export default App;
