@@ -1,0 +1,19 @@
+* {
+  font-family: "Dancing Script", cursive;
+  font-size: 1.6rem;
+}
+
+.App {
+  text-align: center;
+  background-image: url(./1_frame_generated.jpg);
+
+  min-height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  /* width: 100%; */
+  padding: 10%;
+}
+li {
+  list-style: none;
+}
