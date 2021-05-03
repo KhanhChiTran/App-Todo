@@ -1,5 +1,6 @@
-import React, { useState, useReducer, useRef } from "react";
+import React, { useState, useReducer, useRef, useEffect } from "react";
 import uuid from "react-uuid";
+import "./App.css";
 
 const todosReducer = (state, action) => {
   switch (action.type) {
@@ -28,10 +29,18 @@ const todosReducer = (state, action) => {
   }
 };
 
-const initialTodos = [];
+const initialTodos =
+  JSON.parse(localStorage.getItem("todoList")).map((todo) => ({
+    ...todo,
+    isShow: true,
+  })) || [];
 export default function App() {
   const todoInput = useRef();
   const [todos, dispatch] = useReducer(todosReducer, initialTodos);
+
+  useEffect(() => {
+    localStorage.setItem("todoList", JSON.stringify(todos));
+  }, [todos]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,14 +68,17 @@ export default function App() {
       type: value,
     });
   };
-  console.log("rerender....");
+
   return (
-    <div>
+    <div className="App">
       <h1>My Todo App</h1>
       <form action="" onSubmit={handleSubmit}>
         <input type="text" placeholder="e.g reading" ref={todoInput} required />
-        <button type="submit">ADD</button>
+        <button className="submit-btn" type="submit">
+          Add
+        </button>
         <select
+          defaultValue="all"
           onChange={(e) => handleSelectOption(e.target.value)}
           id="show"
           name="todo"
@@ -77,10 +89,10 @@ export default function App() {
         </select>
       </form>
       <div className="show-todo">
-        {todos.map((todo) => {
+        {todos.map((todo, i) => {
           if (todo.isShow)
             return (
-              <div>
+              <div key={i}>
                 <p
                   style={{
                     textDecoration: todo.completed ? "line-through" : null,
@@ -88,9 +100,13 @@ export default function App() {
                 >
                   {todo.title}{" "}
                 </p>
-                <button onClick={() => handleDone(todo.id)}>done</button>
-                <button onClick={() => handleDelete(todo.id)}>delete</button>
-                <hr />
+                <button className="btn" onClick={() => handleDone(todo.id)}>
+                  Done
+                </button>
+                <button className="btn" onClick={() => handleDelete(todo.id)}>
+                  Delete
+                </button>
+                <hr className="line-style" />
               </div>
             );
         })}

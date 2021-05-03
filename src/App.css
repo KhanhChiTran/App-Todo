@@ -5,15 +5,34 @@
 
 .App {
   text-align: center;
-  background-image: url(./1_frame_generated.jpg);
+  background: url(./1_frame_generated.jpg) no-repeat center center fixed;
 
   min-height: 100vh;
   background-size: cover;
-  background-repeat: no-repeat;
 
   /* width: 100%; */
   padding: 10%;
 }
 li {
   list-style: none;
+}
+.submit-btn {
+  cursor: pointer;
+  margin-right: 10px;
+  background-color: rgb(250, 188, 74);
+}
+.btn {
+  cursor: pointer;
+  background-color: #fcd1c8;
+  color: black;
+
+  border: plum;
+  margin-right: 10px;
+
+  font-size: 1rem;
+}
+.line-style {
+  width: 50%;
+
+  border: 2px dashed #999;
 }
