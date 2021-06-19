@@ -2,10 +2,6 @@ import React, { useState, useReducer, useRef, useEffect } from "react";
 import uuid from "react-uuid";
 import "./App.css";
 
-import { WrapButton } from "luly";
-
-console.log(WrapButton);
-
 const todosReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TODO":
