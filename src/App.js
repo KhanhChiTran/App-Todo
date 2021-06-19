@@ -2,12 +2,16 @@ import React, { useState, useReducer, useRef, useEffect } from "react";
 import uuid from "react-uuid";
 import "./App.css";
 
+import { WrapButton } from "luly";
+
+console.log(WrapButton);
+
 const todosReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TODO":
       return [
         ...state,
-        { title: action.task, id: action.id, completed: false, isShow: true },
+        { title: action.task, id: action.id, completed: false, isShow: true }
       ];
     case "DONE_TODO":
       return state.map((todo) =>
@@ -29,11 +33,13 @@ const todosReducer = (state, action) => {
   }
 };
 
-const initialTodos =
-  JSON.parse(localStorage.getItem("todoList")).map((todo) => ({
-    ...todo,
-    isShow: true,
-  })) || [];
+const initialTodos = localStorage.getItem("todoList")
+  ? JSON.parse(localStorage.getItem("todoList")).map((todo) => ({
+      ...todo,
+      isShow: true
+    }))
+  : [];
+
 export default function App() {
   const todoInput = useRef();
   const [todos, dispatch] = useReducer(todosReducer, initialTodos);
@@ -47,30 +53,31 @@ export default function App() {
     dispatch({
       type: "ADD_TODO",
       task: todoInput.current.value,
-      id: uuid(),
+      id: uuid()
     });
     todoInput.current.value = "";
   };
   const handleDone = (id) => {
     dispatch({
       type: "DONE_TODO",
-      id,
+      id
     });
   };
   const handleDelete = (id) => {
     dispatch({
       type: "DELETE_TODO",
-      id,
+      id
     });
   };
   const handleSelectOption = (value) => {
     dispatch({
-      type: value,
+      type: value
     });
   };
 
   return (
     <div className="App">
+      {/* <Button>This is a Button </Button> */}
       <h1>My Todo App</h1>
       <form action="" onSubmit={handleSubmit}>
         <input type="text" placeholder="e.g reading" ref={todoInput} required />
@@ -95,7 +102,7 @@ export default function App() {
               <div key={i}>
                 <p
                   style={{
-                    textDecoration: todo.completed ? "line-through" : null,
+                    textDecoration: todo.completed ? "line-through" : null
                   }}
                 >
                   {todo.title}{" "}

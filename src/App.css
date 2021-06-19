@@ -36,3 +36,12 @@ li {
 
   border: 2px dashed #999;
 }
+form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+}
+input {
+  margin: 10px 0;
+}
