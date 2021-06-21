@@ -5,7 +5,7 @@
 
 .App {
   text-align: center;
-  background: url(./1_frame_generated.jpg) no-repeat center center fixed;
+  background: url(./images/1_frame_generated.jpg) no-repeat center center fixed;
 
   min-height: 100vh;
   background-size: cover;

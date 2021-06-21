@@ -1,40 +1,9 @@
 import React, { useState, useReducer, useRef, useEffect } from "react";
 import uuid from "react-uuid";
+import axios from "axios";
 import "./App.css";
 
-const todosReducer = (state, action) => {
-  switch (action.type) {
-    case "ADD_TODO":
-      return [
-        ...state,
-        { title: action.task, id: action.id, completed: false, isShow: true }
-      ];
-    case "DONE_TODO":
-      return state.map((todo) =>
-        todo.id === action.id ? { ...todo, completed: true } : todo
-      );
-    case "DELETE_TODO":
-      return state.filter((todo) => todo.id !== action.id);
-    case "SHOW_DONE_TODO":
-      return state.map((todo) =>
-        todo.completed ? { ...todo, isShow: true } : { ...todo, isShow: false }
-      );
-    case "SHOW_PENDING_TODO":
-      return state.map((todo) =>
-        todo.completed ? { ...todo, isShow: false } : { ...todo, isShow: true }
-      );
-
-    default:
-      return state.map((todo) => ({ ...todo, isShow: true }));
-  }
-};
-
-const initialTodos = localStorage.getItem("todoList")
-  ? JSON.parse(localStorage.getItem("todoList")).map((todo) => ({
-      ...todo,
-      isShow: true
-    }))
-  : [];
+import { todosReducer, initialTodos } from "./todoReducers";
 
 export default function App() {
   const todoInput = useRef();
@@ -44,8 +13,24 @@ export default function App() {
     localStorage.setItem("todoList", JSON.stringify(todos));
   }, [todos]);
 
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:5000/todos/get-all")
+  //     .then((res) => console.log(res))
+  //     .catch((err) => console.log(err));
+  // }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const task = todoInput.current.value;
+    axios
+      .post("http://localhost:5000/todos/add-todo", {
+        task
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+
     dispatch({
       type: "ADD_TODO",
       task: todoInput.current.value,
